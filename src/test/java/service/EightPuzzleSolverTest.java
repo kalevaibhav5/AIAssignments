@@ -1,11 +1,11 @@
-package dfs;
+package service;
 
 import domain.Node;
 import domain.NodeType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static dfs.EightPuzzleSolver.*;
+import static service.EightPuzzleSolver.*;
 
 class EightPuzzleSolverTest {
 
