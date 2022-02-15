@@ -1,0 +1,7 @@
+README.md
+.gradle
+.idea
+*.DS_Store
+.settings
+/build/
+!gradle/wrapper/gradle-wrapper.jar
