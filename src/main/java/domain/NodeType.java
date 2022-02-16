@@ -1,5 +1,10 @@
 package domain;
 
+/**
+ * @Author: Vaibhav Kale
+ *
+ * NodeType class denotes what action on the parent node generated this Node
+ */
 public enum NodeType {
     UP("U"),
     LEFT("L"),

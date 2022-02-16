@@ -1,19 +1,19 @@
 package service;
 
 import domain.Node;
+import domain.NodeType;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
+/**
+ * @Author: Vaibhav Kale
+ * This Class solves 8 puzzle algorithm using 3 known searching techniques -
+ * 1) Breadth First Search
+ * 2) Depth First Search
+ * 3) Uniform Cost Search
+ **/
 public class EightPuzzleSolver {
-
-   /**
-    * @Author: Vaibhav Kale
-    * This Class solves 8 puzzle algorithm using 3 known searching techniques -
-    * 1) Breadth First Search
-    * 2) Depth First Search
-    * 3) Uniform Cost Search
-    **/
-
 
     /**
      * Breadth First Algorithm
@@ -52,9 +52,6 @@ public class EightPuzzleSolver {
 
             Node currentNode = frontier.remove();
 
-            //add the Node to the path this will be either Root, U for UP , L for Left, R for Right and D for Down actions on the blank space ( represented by 0)
-            path = path.concat(currentNode.nodeType.getNodeType() + "  ");
-
             //Add the Node to explored node so it will not be added to Frontier next time.
 
             exploredNodes.add(currentNode);
@@ -74,6 +71,9 @@ public class EightPuzzleSolver {
             if(goalNode.equals(currentNode)){
                 System.out.println("Success in finding goal node at depth: " + currentNode.depth);
                 System.out.println("Total Node compared: " + nodeCompared);
+                //get the path to reach goal state. This will be either Root, U for UP , L for Left, R for Right and D for Down actions on the blank space ( represented by 0)
+                path = getPath(exploredNodes, currentNode);
+
                 System.out.println("Path to goalNode: " + path);
                 return;
             }
@@ -95,6 +95,38 @@ public class EightPuzzleSolver {
 
         System.out.println("could not find solution");
         return;
+    }
+
+    /**
+     * Traverse the parent nodes from goal node until Root Node is reached.
+     * @param exploredNodes
+     * @param currentNode
+     * @return
+     */
+    private static String getPath(Set<Node> exploredNodes, Node currentNode) {
+        //initialize path
+
+        String path = "[ ";
+
+        Stack<String> pathStack = new Stack<>();
+
+        //get the map of all the explored nodes with key as NodeID and value as Node object
+
+        Map<Integer, Node> allNodes = exploredNodes.stream().collect(Collectors.toMap(node -> node.nodeID, node -> node));
+
+        //get the current Node and add its action to reach node
+        Node node = allNodes.get(currentNode.nodeID);
+        pathStack.push(node.nodeType.getNodeType());
+
+        while (node.nodeType!=NodeType.ROOT){
+            node = allNodes.get(node.parentNodeId) ;
+
+            pathStack.push(node.nodeType.getNodeType());
+        }
+        while(!pathStack.isEmpty()){
+            path = path.concat(pathStack.pop()).concat(" ");
+        }
+        return path.concat("]");
     }
 
     /**
@@ -149,10 +181,6 @@ public class EightPuzzleSolver {
 
             Node currentNode = frontier.pop();
 
-            //add the Node to the path this will be either Root, U for UP , L for Left, R for Right and D for Down actions on the blank space ( represented by 0)
-
-            path = path.concat(currentNode.nodeType.getNodeType() + "  ");
-
 
             //Add the Node to explored node so it will not be added to Frontier next time.
 
@@ -173,6 +201,10 @@ public class EightPuzzleSolver {
             if (goalNode.equals(currentNode)) {
                 System.out.println("Success in finding goal node at depth: " + currentNode.depth);
                 System.out.println("Total Node compared: " + nodeCompared);
+
+                //get the path to reach goal state. This will be either Root, U for UP , L for Left, R for Right and D for Down actions on the blank space ( represented by 0)
+                path = getPath(exploredNodes, currentNode);
+
                 System.out.println("Path to goalNode: " + path);
                 return;
             }
@@ -248,10 +280,6 @@ public class EightPuzzleSolver {
 
             Node currentNode = frontier.remove();
 
-            //add the Node to the path this will be either Root, U for UP , L for Left, R for Right and D for Down actions on the blank space ( represented by 0)
-
-            path = path.concat(currentNode.nodeType.getNodeType() + "  ");
-
             //Add the Node to explored node so it will not be added to Frontier next time.
 
             exploredNodes.add(currentNode);
@@ -271,6 +299,10 @@ public class EightPuzzleSolver {
             if(goalNode.equals(currentNode)){
                 System.out.println("Success in finding goal node at depth: " + currentNode.depth);
                 System.out.println("Total Node compared: " + nodeCompared);
+
+                //get the path to reach goal state. This will be either Root, U for UP , L for Left, R for Right and D for Down actions on the blank space ( represented by 0)
+                path = getPath(exploredNodes, currentNode);
+
                 System.out.println("Path to goalNode: " + path);
                 return;
             }
@@ -304,13 +336,14 @@ public class EightPuzzleSolver {
             System.out.println("Node is null");
             return;
         }
-        System.out.println("");
+        System.out.println("Node " + node.nodeType + " :");
         for(int i=0,k=0;i<3;i++){
             for(int j=0;j<3;j++){
                 System.out.print(node.state[i][j] + "  ");
             }
             System.out.println("  ");
         }
+        System.out.println();
     }
 
 }

@@ -7,6 +7,10 @@ import org.junit.jupiter.api.Test;
 
 import static service.EightPuzzleSolver.*;
 
+/**
+ * @Author Vaibhav Kale
+ * This class contains the test cases for all three BFS, DFS and UCS search algorithms.
+ */
 class EightPuzzleSolverTest {
 
     // Breadth First Test Cases
@@ -20,7 +24,7 @@ class EightPuzzleSolverTest {
         Node initializedNode = new Node(initState, NodeType.ROOT);
         initializedNode.depth=0;
 
-        Node goalNode =  new Node(goalState, NodeType.ROOT);
+        Node goalNode =  new Node(goalState, NodeType.GOAL);
 
         printNode(initializedNode);
         printNode(goalNode);
@@ -33,6 +37,22 @@ class EightPuzzleSolverTest {
     public void testBFSAtRandomInitializedNode(){
         Integer [][] initState = {{2,8,3}, {1,6,4}, {7,0,5}};
         Integer [][] goalState = {{1,2,3}, {8,0,4}, {7,6,5}};
+
+        Node initializedNode = new Node(initState, NodeType.ROOT);
+        initializedNode.depth=0;
+
+        Node goalNode =  new Node(goalState, NodeType.GOAL);
+        printNode(initializedNode);
+        printNode(goalNode);
+
+        bfsSearch(initializedNode, goalNode);
+    }
+
+    @Test
+    @DisplayName("Second test case for Checking the number of comparisons when the goal node is random initialized node")
+    public void testBFSAtRandomInitializedNode2(){
+        Integer [][] initState = {{1,8,3}, {5,0,4}, {2,6,7}};
+        Integer [][] goalState = {{1,3,0}, {5,8,4}, {2,6,7}};
 
         Node initializedNode = new Node(initState, NodeType.ROOT);
         initializedNode.depth=0;
