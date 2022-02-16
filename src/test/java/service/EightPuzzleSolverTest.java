@@ -21,6 +21,7 @@ class EightPuzzleSolverTest {
         initializedNode.depth=0;
 
         Node goalNode =  new Node(goalState, NodeType.ROOT);
+
         printNode(initializedNode);
         printNode(goalNode);
 

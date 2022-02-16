@@ -48,7 +48,7 @@ public class EightPuzzleSolver {
         //Loop and compare while frontier is not empty or the goal state is reached
 
         while(!frontier.isEmpty()){
-            //get the first node in the queue (FIFO)
+            //get the first node in the queue (First In First Out)
 
             Node currentNode = frontier.remove();
 
@@ -56,6 +56,7 @@ public class EightPuzzleSolver {
             path = path.concat(currentNode.nodeType.getNodeType() + "  ");
 
             //Add the Node to explored node so it will not be added to Frontier next time.
+
             exploredNodes.add(currentNode);
 
             //Increment the node comparision counter.
@@ -97,7 +98,7 @@ public class EightPuzzleSolver {
     }
 
     /**
-     * Check the successor children if they are not present in explored or frontier then add it to frontier
+     * Check the successor child if it is not present in explored or frontier then add it to frontier
      * @param frontier
      * @param exploredNodes
      * @param node
@@ -143,14 +144,32 @@ public class EightPuzzleSolver {
         //Loop and compare while frontier is not empty or the goal state is reached
 
         while (!frontier.isEmpty()) {
+
+            //get the first node in the stack (Last In First Out)
+
             Node currentNode = frontier.pop();
+
+            //add the Node to the path this will be either Root, U for UP , L for Left, R for Right and D for Down actions on the blank space ( represented by 0)
+
             path = path.concat(currentNode.nodeType.getNodeType() + "  ");
+
+
+            //Add the Node to explored node so it will not be added to Frontier next time.
+
             exploredNodes.add(currentNode);
 
+            //Increment the node comparision counter.
+
             nodeCompared++;
+
+            //Print the nodes compared after every 100 comparisions.
+
             if (nodeCompared % 100 == 0) {
                 System.out.println("Total comparisons so far: " + nodeCompared);
             }
+
+            //compare the current node to goal node and terminate the search if the node match .
+
             if (goalNode.equals(currentNode)) {
                 System.out.println("Success in finding goal node at depth: " + currentNode.depth);
                 System.out.println("Total Node compared: " + nodeCompared);
@@ -158,17 +177,122 @@ public class EightPuzzleSolver {
                 return;
             }
 
+            // Generate and get the successors to frontier Stack if the goal node is not matched in previous step.
+
             Node.getSuccesorNodes(currentNode);
+
+            //add all possible children to the frontier. Say if the blank position is at (0,0) then only action possible is Right and Down so only 2 children
+            //will be added.
+
             addToFrontier(frontier, exploredNodes, currentNode.rightNode);
             addToFrontier(frontier, exploredNodes, currentNode.downNode);
             addToFrontier(frontier, exploredNodes, currentNode.leftNode);
             addToFrontier(frontier, exploredNodes, currentNode.upNode);
         }
 
+        //If no solution is found then print and return
+
         System.out.println("could not find solution");
         return;
     }
 
+    /**
+     * This method checks if the successor child Node is not present in frontier and explored then add the Node to frontier.
+     * @param frontier
+     * @param exploredNodes
+     * @param node
+     */
+    private static void addToFrontier(Stack<Node> frontier, Set<Node> exploredNodes, Node node) {
+        if (node != null) {
+            if (!exploredNodes.contains(node) && !frontier.contains(node)) {
+                frontier.add(node);
+            }
+        }
+    }
+
+    /**
+     * Uniform Cost Search Algorithm
+     * uses Node class to hold the 3x3 state and configurations of Initial and goal configurations.
+     * @param initialNode
+     * @param goalNode
+     */
+    public static void ucsSearch(Node initialNode, Node goalNode){
+
+        //Initialize the path. This will hold list of actions taken to reach goal configurations from the initial configuration.
+
+        String path = "";
+
+        //Initialized countered to get total number of nodes compared in the search algorithm.
+
+        Integer nodeCompared = 0;
+
+        /*Initialize the Frontier with an empty Priority queue to add successor nodes. This Priority Queue will use cost function
+         Cost is calculated based on how many cells are matching between goal node and the node to be compared.
+         Priority Queue data structure will enforce UCS algorithm behavior by always retrieving  the node with highest matching cells first.
+         */
+        Queue<Node> frontier = new PriorityQueue<>((node1, node2) -> Integer.compare(node2.getCost(goalNode), node1.getCost(goalNode)));
+
+        // Add the root node to frontier.
+
+        frontier.add(initialNode);
+
+        //Initialize explored nodes to Set data structure. This will ensure that once a node is compared it will not be added back to frontier again.
+
+        Set<Node> exploredNodes = new HashSet<>();
+
+        //Loop and compare while frontier is not empty or the goal state is reached
+
+        while(!frontier.isEmpty()){
+
+            //get the first node in the Priority Queue
+
+            Node currentNode = frontier.remove();
+
+            //add the Node to the path this will be either Root, U for UP , L for Left, R for Right and D for Down actions on the blank space ( represented by 0)
+
+            path = path.concat(currentNode.nodeType.getNodeType() + "  ");
+
+            //Add the Node to explored node so it will not be added to Frontier next time.
+
+            exploredNodes.add(currentNode);
+
+            //Increment the node comparision counter.
+
+            nodeCompared++;
+
+            //Print the nodes compared after every 100 comparisions.
+
+            if(nodeCompared % 100 == 0){
+                System.out.println("Total comparisons so far: " + nodeCompared);
+            }
+
+            //compare the current node to goal node and terminate the search if the node match .
+
+            if(goalNode.equals(currentNode)){
+                System.out.println("Success in finding goal node at depth: " + currentNode.depth);
+                System.out.println("Total Node compared: " + nodeCompared);
+                System.out.println("Path to goalNode: " + path);
+                return;
+            }
+
+            // Generate and get the successors to frontier Priority Queue if the goal node is not matched in previous step.
+
+            Node.getSuccesorNodes(currentNode);
+
+            //add all possible children to the frontier. Say if the blank position is at (0,0) then only action possible is Right and Down so only 2 children
+            //will be added.
+
+            addToFrontier(frontier, exploredNodes, currentNode.upNode);
+            addToFrontier(frontier, exploredNodes, currentNode.leftNode);
+            addToFrontier(frontier, exploredNodes, currentNode.downNode);
+            addToFrontier(frontier, exploredNodes, currentNode.rightNode);
+        }
+
+        //If no solution is found then print and return
+
+        System.out.println("could not find solution");
+        return;
+    }
 
     /**
      * Helper method to print the state of Node
@@ -189,52 +313,4 @@ public class EightPuzzleSolver {
         }
     }
 
-
-
-    private static void addToFrontier(Stack<Node> frontier, Set<Node> exploredNodes, Node node) {
-        if (node != null) {
-            if (!exploredNodes.contains(node) && !frontier.contains(node)) {
-                frontier.add(node);
-            }
-        }
-    }
-
-    public static HashSet<Node> ucsSearch(Node initialNode, Node goalNode){
-
-        String path = "";
-        HashSet<Node> allNodes = new HashSet<>();
-
-        Integer nodeCompared = 0;
-        Queue<Node> frontier = new PriorityQueue<>((node1, node2) -> Integer.compare(node2.getCost(goalNode), node1.getCost(goalNode)));
-        allNodes.add(initialNode);
-        frontier.add(initialNode);
-
-        Set<Node> exploredNodes = new HashSet<>();
-
-        while(!frontier.isEmpty()){
-            Node currentNode = frontier.remove();
-            path = path.concat(currentNode.nodeType.getNodeType() + "  ");
-            exploredNodes.add(currentNode);
-
-            nodeCompared++;
-            if(nodeCompared % 100 == 0){
-                System.out.println("Total comparisons so far: " + nodeCompared);
-            }
-            if(goalNode.equals(currentNode)){
-                System.out.println("Success in finding goal node at depth: " + currentNode.depth);
-                System.out.println("Total Node compared: " + nodeCompared);
-                System.out.println("Path to goalNode: " + path);
-                return allNodes;
-            }
-
-            Node.getSuccesorNodes(currentNode);
-            addToFrontier(frontier, exploredNodes, currentNode.upNode);
-            addToFrontier(frontier, exploredNodes, currentNode.leftNode);
-            addToFrontier(frontier, exploredNodes, currentNode.downNode);
-            addToFrontier(frontier, exploredNodes, currentNode.rightNode);
-        }
-
-        System.out.println("could not find solution");
-        return allNodes;
-    }
 }
